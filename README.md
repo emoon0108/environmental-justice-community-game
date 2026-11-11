@@ -56,7 +56,7 @@ Rooms expire 24 hours after their last change. Player bearer tokens are generate
 
 | Path | Purpose |
 | --- | --- |
-| `src/game.js` | Shared game rules, six characters, and 24 educational cards |
+| `src/game.js` | Shared game rules, six characters, and 27 educational cards |
 | `src/app.js` | Board artwork, interface, local play, and room client |
 | `src/styles.css` | Responsive layouts and reduced-motion styles |
 | `src/index.html` | Accessible page structure |
@@ -66,7 +66,7 @@ Rooms expire 24 hours after their last change. Player bearer tokens are generate
 
 ## Learning design
 
-The deck contains eight knowledge, eight challenge, and eight community action cards. Each question includes a plain-language explanation and a link to its learning source. Cards are sampled without repeats within a category until that deck is exhausted.
+The deck contains nine knowledge, nine challenge, and nine community action cards. Each question includes a plain-language explanation and a link to its learning source. Cards are sampled without repeats within a category until that deck is exhausted.
 
 The neighborhood and scenarios are fictional. Community points and the impact indicators are learning devices, not real environmental measurements. The game encourages discussion of structural inequalities and community leadership without assigning disadvantages to characters based on identity.
 

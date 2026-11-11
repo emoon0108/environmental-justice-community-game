@@ -48,12 +48,13 @@ test('a complete cooperative game ends only when everyone arrives',()=>{
 });
 test('a category deck cycles only after every card is drawn',()=>{
   let game=newGame(players());const seen=new Set();
-  for(let i=0;i<8;i++){game.players[game.turn].position=0;game=spin(game,6);assert.ok(!seen.has(game.card));seen.add(game.card);game=next(answer(game));}
-  game.players[game.turn].position=0;game=spin(game,6);assert.ok(seen.has(game.card));assert.equal(seen.size,8);
+  const count=CARDS.filter(c=>c.type==='knowledge').length;
+  for(let i=0;i<count;i++){game.players[game.turn].position=0;game=spin(game,6);assert.ok(!seen.has(game.card));seen.add(game.card);game=next(answer(game));}
+  game.players[game.turn].position=0;game=spin(game,6);assert.ok(seen.has(game.card));assert.equal(seen.size,count);
 });
 test('every card has a valid answer, explanation, category, and source',()=>{
   assert.equal(new Set(CARDS.map(c=>c.id)).size,CARDS.length);
-  for(const c of CARDS){assert.ok(CATEGORIES[c.type]);assert.ok(c.options[c.answer]);assert.ok(c.explanation.length>30);assert.ok(c.source.startsWith('https://www.epa.gov/'));}
+  for(const c of CARDS){assert.ok(CATEGORIES[c.type]);assert.ok(c.options[c.answer]);assert.ok(c.explanation.length>30);assert.ok(['www.epa.gov','www.cdc.gov'].includes(new URL(c.source).hostname));}
 });
 test('only a host can start a ready online room',()=>{
   let game=newGame(players().slice(0,1),'online');assert.throws(()=>takeAction(game,game.host,'start'),/At least two/);
