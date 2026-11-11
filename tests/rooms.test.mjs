@@ -77,3 +77,12 @@ test('the app remains usable when online storage is unavailable',async()=>{
   const res=await worker.fetch(new Request('https://game.test/api/rooms',{method:'POST',body:'{}'}),{});assert.equal(res.status,503);
   const body=await res.json();assert.match(body.error,/Shared-device play/);
 });
+test('GitHub Pages receives CORS headers, including on error responses',async()=>{
+  const req=new Request('https://game.test/api/rooms/ABCDEF',{headers:{Origin:'https://emoon0108.github.io'}});
+  const response=await worker.fetch(req,{});
+  assert.equal(response.headers.get('Access-Control-Allow-Origin'),'https://emoon0108.github.io');
+  const allowed=await worker.fetch(new Request('https://game.test/api/rooms',{method:'OPTIONS',headers:{Origin:'https://emoon0108.github.io'}}),{});
+  assert.equal(allowed.status,204);assert.match(allowed.headers.get('Access-Control-Allow-Headers'),/Authorization/);
+  const denied=await worker.fetch(new Request('https://game.test/api/rooms',{method:'OPTIONS',headers:{Origin:'https://unrelated.test'}}),{});
+  assert.equal(denied.status,403);assert.equal(denied.headers.get('Access-Control-Allow-Origin'),null);
+});

@@ -43,7 +43,7 @@ function announce(message) { $('#announcer').textContent = message; }
 function isMyTurn() { return !online || activePlayer(game)?.id === session?.playerId; }
 function mine(player) { return online ? player.id === session?.playerId : player.id === game.players[0].id; }
 function saveLocal() { if (!online) setStorage('common-ground-local-v1',game); }
-function showModal(type, content, locked = false) { currentModal = type; $('#modal-content').innerHTML = content; modal.classList.toggle('no-close',locked); hydrateIcons(modal); if (!modal.open) modal.showModal(); }
+function showModal(type, content, locked = false) { currentModal = type; $('#modal-content').innerHTML = content; const title=modal.querySelector('h2');if(title)title.id='modal-title';modal.querySelectorAll('button:not([type])').forEach(button=>button.type='button');modal.classList.toggle('no-close',locked); hydrateIcons(modal); if (!modal.open) modal.showModal(); }
 function closeModal() { if (currentModal === 'card' && game.phase !== 'spin' && game.status === 'playing') return; modal.close(); currentModal = ''; }
 modal.addEventListener('cancel', e => { if (currentModal === 'card' || (currentModal === 'lobby' && online)) e.preventDefault(); else currentModal = ''; });
 modal.addEventListener('click', e => { if (e.target === modal && !['card','lobby'].includes(currentModal)) closeModal(); });
