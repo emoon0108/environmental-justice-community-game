@@ -96,7 +96,7 @@ function buildWheel() {
 }
 function render() {
   const current = activePlayer(game), waiting = online && !isMyTurn();
-  if (!busy && game.lastSpin) $('#wheel-result').textContent = game.lastSpin;
+  if (!busy) $('#wheel-result').textContent = game.lastSpin || '↗';
   $('#session-label').textContent = online ? 'Room '+session.code+' · '+game.players.length+' players' : 'Shared device · '+game.players.length+' players';
   $('#round-label').textContent = 'ROUND '+String(game.round).padStart(2,'0');
   $('#turn-title').textContent = game.status==='complete' ? 'Look what we built.' : game.status==='lobby' ? 'Gather your people.' : current.name + (waiting?' is up.':', you’re up.');

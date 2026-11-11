@@ -34,7 +34,7 @@ The dev server rebuilds changed source on the next request. Refresh the browser 
 
 ### GitHub Pages
 
-Pushes to `main` run `.github/workflows/pages.yml`: syntax checks, automated tests, a static build, and a deployment to the `github-pages` environment. GitHub Pages must be enabled with **GitHub Actions** as its source.
+GitHub Pages publishes the root of the `gh-pages` branch. Pushes to `main` run `.github/workflows/pages.yml`: syntax checks, automated tests, a static build, and an update to the published branch. The publisher explicitly requests a Pages build after updating the branch. The initial release can also be built and pushed locally, independently of the Actions runner queue.
 
 ```sh
 npm run build:pages
