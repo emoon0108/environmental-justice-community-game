@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8f4">
+  <meta name="game-api" content="__GAME_API__">
+  <meta name="description" content="Common Ground is a cooperative board game about environmental justice. Explore your neighborhood, learn together, and build a healthier community.">
+  <title>Common Ground — The Community Game</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='12' fill='%23254335'/%3E%3Cpath d='M10 27V17a10 10 0 0 1 20 0v10h-5V17a5 5 0 0 0-10 0v10z' fill='%23d5e7b3'/%3E%3C/svg%3E">
+  <style>/* APP_STYLES */</style>
+</head>
+<body>
+  <a href="#game" class="skip-link">Skip to game</a>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="Common Ground home"><span class="brand-mark"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M7 29V17a13 13 0 0 1 26 0v12h-6V17a7 7 0 0 0-14 0v12Z" fill="currentColor"/><path d="M17 29v-9a3 3 0 0 1 6 0v9Z" fill="currentColor"/></svg></span><span>common ground<span class="brand-sub">THE COMMUNITY GAME</span></span></a>
+    <nav aria-label="Main navigation"><button class="nav-link active" data-action="play">The game</button><button class="nav-link" data-action="mission">Our purpose</button><button class="nav-link" data-action="instructions">How to play <span class="question-mark">?</span></button></nav>
+    <button class="button header-button" data-action="new-game"><span data-icon="plus"></span> New game</button>
+  </header>
+  <main id="game">
+    <section class="intro"><div><div class="eyebrow"><span class="little-line"></span> SMALL STEPS. COLLECTIVE CHANGE.</div><h1>Your neighborhood. Our shared future.</h1><p>A little knowledge. A few good choices. A healthier community, together.</p></div><div class="session-controls"><span class="session-pill" id="session-label"></span><button class="button white-button" data-action="invite"><span data-icon="people"></span> Play with friends</button></div></section>
+    <div class="game-layout">
+      <div class="left-column">
+        <section class="board-panel" aria-label="Shared game board"><div class="panel-heading"><div class="board-heading"><span class="live-dot"></span><h2>The neighborhood</h2><span class="round-label" id="round-label">ROUND 01</span></div><button class="icon-button" data-action="fullscreen" aria-label="Expand game board"><span data-icon="expand"></span></button></div><div class="board-viewport" id="board-viewport"><div id="board" class="board"></div><div class="map-label"><span class="map-compass">N<span>↑</span></span><span>EVERY PATH CONNECTS US</span></div></div><div class="board-legend"><div><span class="legend-dot knowledge"></span> Knowledge</div><div><span class="legend-dot challenge"></span> Challenge</div><div><span class="legend-dot action"></span> Community action</div><span class="board-spaces">36 spaces · one shared goal</span></div></section>
+        <section class="decks-section" aria-labelledby="decks-heading"><div class="section-heading"><h2 id="decks-heading">Every space is a new perspective.</h2><button class="text-button" data-action="library">Explore the cards <span data-icon="arrow"></span></button></div><div class="deck-grid" id="deck-grid"></div></section>
+        <section class="activity-panel"><div class="activity-icon" data-icon="activity"></div><div><span class="eyebrow">AROUND THE NEIGHBORHOOD</span><p id="latest-activity">A new chapter starts here. Your community is ready.</p></div><button class="icon-button" aria-label="View game activity" data-action="activity"><span data-icon="arrow"></span></button></section>
+      </div>
+      <aside class="sidebar" aria-label="Game controls">
+        <section class="turn-panel"><div class="turn-topline"><span class="eyebrow" id="turn-eyebrow">LET’S MAKE A MOVE</span><span class="turn-indicator" id="turn-indicator">YOUR TURN</span></div><h2 id="turn-title">Alex, you’re up.</h2><p class="turn-description" id="turn-description">Give the wheel a spin. See where change takes you.</p><div class="wheel-wrap"><span class="wheel-pointer"></span><div class="wheel" id="wheel"><svg viewBox="0 0 220 220" id="wheel-svg" role="img" aria-label="Spinning wheel with numbers one to ten"></svg></div><div class="wheel-hub"><span id="wheel-result">↗</span></div></div><button class="button primary-button spin-button" id="spin-button" data-action="spin"><span data-icon="rotate"></span><span id="spin-label">Spin the wheel</span></button><p class="spin-footnote" id="spin-footnote">Move 1–10 spaces. Make your move count.</p></section>
+        <section class="players-panel"><div class="section-heading"><h2>Your community <span id="player-count">4</span></h2><button class="text-button" id="manage-players" data-action="players">Edit</button></div><div id="players-list"></div><div class="cooperative-note"><span data-icon="heart"></span> We move forward together.</div></section>
+        <section class="community-panel"><div class="community-heading"><span class="community-badge" data-icon="sprout"></span><h2>A little better, together.</h2></div><p>Every good choice grows our community.</p><div class="goal-line"><span>Community goal</span><strong><span id="community-points">0</span><span class="muted"> / 100</span></strong></div><div class="progress-track" role="progressbar" aria-label="Community goal" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="community-bar"></div></div><button class="text-button" data-action="impact">See our impact <span data-icon="arrow"></span></button></section>
+      </aside>
+    </div>
+    <footer><span class="footer-tag"><span data-icon="leaf"></span> A game about the world we share.</span><span>Learn together. Leave a little better.</span><button class="text-button" data-action="sources">Learning resources <span data-icon="external"></span></button></footer>
+  </main>
+  <dialog id="modal" aria-labelledby="modal-title"><div class="modal-top"><div class="modal-brand">COMMON GROUND</div><button class="icon-button" data-action="close" aria-label="Close dialog"><span data-icon="close"></span></button></div><div id="modal-content"></div></dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <div id="announcer" class="sr-only" role="status" aria-live="polite"></div>
+  <script type="module">/* APP_SCRIPT */</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+node_modules/
+dist/
+pages/
+.local/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+.wrangler/
+work/
+outputs/

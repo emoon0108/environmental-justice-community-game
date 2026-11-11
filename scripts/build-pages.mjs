@@ -1,0 +1,11 @@
+import { readFile,writeFile,mkdir } from 'node:fs/promises';
+const root=new URL('../',import.meta.url);
+const read=p=>readFile(new URL(p,root),'utf8');
+const [html,css,app,core]=await Promise.all(['src/index.html','src/styles.css','src/app.js','src/game.js'].map(read));
+const api=process.env.GAME_API_ORIGIN||'https://environmental-justice-community-game.codex6633440.chatgpt.site';
+if(!/^https:\/\/[a-z0-9.-]+$/i.test(api))throw new Error('GAME_API_ORIGIN must be an HTTPS origin.');
+const page=html.replace('__GAME_API__',api).replace('/* APP_STYLES */',()=>css).replace('/* APP_SCRIPT */',()=>core.replace(/^export /gm,'')+'\n'+app.replace(/^import .*?;\s*/,''));
+await mkdir(new URL('pages/',root),{recursive:true});
+await writeFile(new URL('pages/index.html',root),page);
+await writeFile(new URL('pages/.nojekyll',root),'');
+console.log('GitHub Pages built. Online room service: '+api);

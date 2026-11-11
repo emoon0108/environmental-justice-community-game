@@ -1,0 +1,15 @@
+{
+  "name": "common-ground-community-game",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A cooperative environmental justice board game",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "build": "node scripts/build.mjs",
+    "build:pages": "node scripts/build-pages.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "check": "node --check src/app.js && node --check src/game.js && node --check worker/index.js && node --check scripts/dev.mjs"
+  },
+  "engines": { "node": ">=22.13" }
+}

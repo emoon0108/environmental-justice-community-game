@@ -1,0 +1,12 @@
+import { readFile,writeFile,mkdir } from 'node:fs/promises';
+const root=new URL('../',import.meta.url);
+const read=p=>readFile(new URL(p,root),'utf8');
+const [html,css,app,core,worker,manifest]=await Promise.all(['src/index.html','src/styles.css','src/app.js','src/game.js','worker/index.js','.openai/hosting.json'].map(read));
+const coreBundled=core.replace(/^export /gm,'');
+const appBundled=app.replace(/^import .*?;\s*/,'');
+const page=html.replace('__GAME_API__','').replace('/* APP_STYLES */',()=>css).replace('/* APP_SCRIPT */',()=>coreBundled+'\n'+appBundled);
+const output=worker.replace(/^import .*?;\s*/,'').replace("'__COMMON_GROUND_HTML__'",()=>JSON.stringify(page));
+await mkdir(new URL('dist/server/',root),{recursive:true});await mkdir(new URL('dist/.openai/',root),{recursive:true});
+await writeFile(new URL('dist/server/index.js',root),coreBundled+'\n'+output);
+await writeFile(new URL('dist/.openai/hosting.json',root),manifest);
+console.log('Built Common Ground: one self-contained Worker, '+Math.round(Buffer.byteLength(output)/1024)+' KB.');
