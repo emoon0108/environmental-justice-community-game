@@ -1,12 +1,12 @@
 import { readFile } from 'node:fs/promises';
-const repository=process.env.GITHUB_REPOSITORY;
-const token=process.env.GITHUB_TOKEN;
-if(!repository||!token)throw new Error('Run this publisher in the repository’s GitHub Actions workflow.');
-const base='https://api.github.com/repos/'+repository;
+import { execFileSync } from 'node:child_process';
+const repository=process.env.GITHUB_REPOSITORY||'emoon0108/environmental-justice-community-game';
+if(!/^[a-z0-9_.-]+\/[a-z0-9_.-]+$/i.test(repository))throw new Error('Invalid repository name.');
 async function api(path,method='GET',body) {
-  const response=await fetch(base+path,{method,headers:{Authorization:'Bearer '+token,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28',...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});
-  if(!response.ok)throw new Error('GitHub Pages publishing request failed: HTTP '+response.status);
-  return response.status===204?null:response.json();
+  const args=['api','repos/'+repository+path,'--method',method];
+  if(body)args.push('--input','-');
+  const output=execFileSync('gh',args,{encoding:'utf8',...(body?{input:JSON.stringify(body)}:{})});
+  return output.trim()?JSON.parse(output):null;
 }
 const content=(await readFile(new URL('../pages/index.html',import.meta.url))).toString('base64');
 const current=await api('/contents/index.html?ref=gh-pages');

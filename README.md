@@ -34,13 +34,14 @@ The dev server rebuilds changed source on the next request. Refresh the browser 
 
 ### GitHub Pages
 
-GitHub Pages publishes the root of the `gh-pages` branch. Pushes to `main` run `.github/workflows/pages.yml`: syntax checks, automated tests, a static build, and an update to the published branch. The publisher explicitly requests a Pages build after updating the branch. The initial release can also be built and pushed locally, independently of the Actions runner queue.
+GitHub Pages publishes the root of the `gh-pages` branch. Its `.nojekyll` marker supports direct static publication without an Actions build runner. Actions is currently disabled for this repository. The optional workflow is available if Actions is enabled later; it checks, tests, builds, and publishes changes from `main`.
 
 ```sh
 npm run build:pages
+npm run deploy:pages
 ```
 
-This produces `pages/index.html` with inline CSS, artwork, and JavaScript. Relative navigation supports GitHub project paths. Google Fonts is optional; the game falls back to local sans-serif fonts when it is unavailable.
+The build produces `pages/index.html` with inline CSS, artwork, and JavaScript. The publisher requires the GitHub CLI (`gh`) signed in with repository access; it updates the release branch and requests publication. Run checks and tests before publishing. Relative navigation supports GitHub project paths. Google Fonts is optional; the game falls back to local sans-serif fonts when it is unavailable.
 
 ### Online room service
 
