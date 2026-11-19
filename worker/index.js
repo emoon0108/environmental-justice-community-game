@@ -1,4 +1,4 @@
-import { CHARACTERS, FINISH, makePlayer, newGame, takeAction, randomInt, log } from '../src/game.js';
+import { VERSION, makePlayer, newGame, takeAction, randomInt, log } from '../src/game.js';
 
 // The build embeds the complete HTML/CSS/JS application here, producing one Worker.
 const HTML = '__COMMON_GROUND_HTML__';
@@ -49,6 +49,7 @@ async function handleAPI(request,env,url) {
   if(!env.DB)throw new HttpError(503,'Online rooms are unavailable right now. Shared-device play is ready to use.');
   if(request.method==='POST'&&!allowedOrigin(request.headers.get('origin'),url))throw new HttpError(403,'Open the game directly to continue.');
   const path=url.pathname.replace(/\/$/,'');
+  if(path==='/api/version'&&request.method==='GET')return json({version:VERSION});
   if(path==='/api/rooms'&&request.method==='POST') {
     const body=await parseBody(request);
     let player;try{player=makePlayer(body.name,body.character);}catch(e){throw new HttpError(400,e.message);}
@@ -63,12 +64,12 @@ async function handleAPI(request,env,url) {
   const [,code,operation]=match,room=await loadRoom(env.DB,code);
   if(operation==='join'&&request.method==='POST') {
     if(room.game.status!=='lobby')throw new HttpError(409,'This game has already started. Join a new room before it begins.');
-    if(room.game.players.length>=6)throw new HttpError(409,'This room is full. A room has space for six neighbors.');
+    if(room.game.players.length>=6)throw new HttpError(409,'This room is full. A room has space for six players.');
     const body=await parseBody(request);
     let player;try{player=makePlayer(body.name,body.character);}catch(e){throw new HttpError(400,e.message);}
-    if(room.game.players.some(p=>p.character===player.character))throw new HttpError(409,'A neighbor has that piece. Choose a different character.');
-    if(room.game.players.some(p=>p.name.toLowerCase()===player.name.toLowerCase()))throw new HttpError(409,'A neighbor has that name. Add an initial or choose another name.');
-    const t=token();room.game.players.push(player);room.members[player.id]=await hash(t);log(room.game,player.name+' joined the neighborhood.','start');
+    if(room.game.players.some(p=>p.character===player.character))throw new HttpError(409,'Another player has that character. Choose a different one.');
+    if(room.game.players.some(p=>p.name.toLowerCase()===player.name.toLowerCase()))throw new HttpError(409,'Another player has that name. Add an initial or choose another name.');
+    const t=token();room.game.players.push(player);room.members[player.id]=await hash(t);log(room.game,player.name+' joined the game.','start');
     const game=await saveRoom(env.DB,room,room.game,room.members);
     return json({code,token:t,playerId:player.id,game},201);
   }
@@ -76,8 +77,8 @@ async function handleAPI(request,env,url) {
   if(!operation&&request.method==='GET')return json({game:room.game,code});
   if(operation==='action'&&request.method==='POST') {
     const body=await parseBody(request);
-    if(!['start','spin','answer','next'].includes(body.action))throw new HttpError(400,'Choose a valid game action.');
-    let next;try{next=takeAction(room.game,playerId,body.action,{answer:body.answer});}catch(e){throw new HttpError(409,e.message);}
+    if(!['start','roll','use-card','move-back','continue'].includes(body.action))throw new HttpError(400,'Choose a valid game action.');
+    let next;try{next=takeAction(room.game,playerId,body.action);}catch(e){throw new HttpError(409,e.message);}
     return json({game:await saveRoom(env.DB,room,next)});
   }
   if(operation==='leave'&&request.method==='POST') {
@@ -85,13 +86,9 @@ async function handleAPI(request,env,url) {
     game.players.splice(index,1);delete room.members[playerId];
     if(!game.players.length) {await env.DB.prepare('DELETE FROM rooms WHERE code = ? AND revision = ?').bind(code,room.revision).run();return json({left:true});}
     if(game.host===playerId)game.host=game.players[0].id;
-    if(previousCurrentId===playerId) {game.turn=index%game.players.length;game.phase='spin';game.card=null;game.feedback=null;}
+    if(previousCurrentId===playerId) {game.turn=index%game.players.length;if(game.status==='playing'){game.phase='roll';game.event=null;}}
     else game.turn=game.players.findIndex(p=>p.id===previousCurrentId);
-    if(game.status==='playing') {
-      if(game.players.every(p=>p.position===FINISH))game.status='complete';
-      else while(game.players[game.turn].position===FINISH)game.turn=(game.turn+1)%game.players.length;
-    }
-    log(game,player.name+' left the neighborhood.','start');await saveRoom(env.DB,room,game,room.members);return json({left:true});
+    log(game,player.name+' left the game.','start');await saveRoom(env.DB,room,game,room.members);return json({left:true});
   }
   throw new HttpError(405,'That request method is not supported.');
 }
@@ -108,7 +105,7 @@ export default {
       return new Response(HTML,{headers:{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-cache','X-Content-Type-Options':'nosniff','Referrer-Policy':'strict-origin-when-cross-origin','Permissions-Policy':'camera=(), microphone=(), geolocation=()','Content-Security-Policy':"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'"}});
     } catch(error) {
       if(error instanceof HttpError)return cors(json({error:error.message},error.status),request,url);
-      return cors(json({error:'The neighborhood service is taking a break. Please try again shortly.'},503),request,url);
+      return cors(json({error:'The game service is taking a break. Please try again shortly.'},503),request,url);
     }
   }
 };

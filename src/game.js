@@ -1,66 +1,186 @@
-export const FINISH = 36;
+// Shared rules for the Environmental Justice board game. The browser and the
+// online room Worker both run these functions, so every move is validated the
+// same way in shared-device and online play.
+
+export const VERSION = 2;
+export const SPACES = 36;          // typed spaces on the board (1–36)
+export const FINISH = SPACES + 1;  // the finish line just past space 36
+export const DIE_SIDES = 6;
+export const CALL_TO_ACTION = 'Build for Everyone, Leave No One Behind!';
+
 export const CHARACTERS = [
-  { id: 'leaf', name: 'The Grower', color: '#347c68', light: '#e0eee5', icon: 'leaf' },
-  { id: 'water', name: 'The Protector', color: '#4e80c8', light: '#e4edfa', icon: 'drop' },
-  { id: 'sun', name: 'The Optimist', color: '#bb872d', light: '#fcf0d3', icon: 'sun' },
-  { id: 'flower', name: 'The Connector', color: '#b76d83', light: '#f7e4eb', icon: 'flower' },
-  { id: 'bird', name: 'The Advocate', color: '#7e70ad', light: '#ece7f6', icon: 'bird' },
-  { id: 'sprout', name: 'The Builder', color: '#b66c49', light: '#f7e9dd', icon: 'sprout' }
+  { id: 'leaf', name: 'The Grower', color: '#2f7a5f', light: '#dcefe4', icon: 'leaf' },
+  { id: 'water', name: 'The Protector', color: '#3f74c4', light: '#e0eafb', icon: 'drop' },
+  { id: 'sun', name: 'The Optimist', color: '#b07a12', light: '#fcefd0', icon: 'sun' },
+  { id: 'flower', name: 'The Connector', color: '#b2557a', light: '#f8e1ea', icon: 'flower' },
+  { id: 'bird', name: 'The Advocate', color: '#6d5bb0', light: '#ebe6f8', icon: 'bird' },
+  { id: 'sprout', name: 'The Builder', color: '#b45a32', light: '#f8e5da', icon: 'sprout' }
 ];
-export const CATEGORIES = {
-  knowledge: { name: 'Knowledge', short: 'Learn something new', color: '#4d7ebc', light: '#e7eff9', icon: 'book' },
-  challenge: { name: 'Challenge', short: 'Think it through', color: '#bd8250', light: '#fbefdf', icon: 'bolt' },
-  action: { name: 'Community action', short: 'Make a difference', color: '#4e8974', light: '#e6f1e9', icon: 'people' }
+
+export const SPACE_TYPES = {
+  normal: { name: 'Normal space', plural: 'Normal spaces', count: 18 },
+  mystery: { name: 'Mystery space', plural: 'Mystery spaces', count: 9 },
+  disaster: { name: 'Disaster space', plural: 'Disaster spaces', count: 9 }
 };
-const gi = 'https://www.epa.gov/green-infrastructure/benefits-green-infrastructure';
-const heat = 'https://www.epa.gov/heatislands/benefits-trees-and-vegetation';
-const ej = 'https://www.epa.gov/sites/default/files/2015-02/documents/ips-final-report.pdf';
-const waterReport = 'https://www.cdc.gov/drinking-water/about/how-to-read-drinking-water-quality-reports.html';
-export const CARDS = [
-  { id:'k1', type:'knowledge', topic:'Environmental justice', title:'A fair place to call home', question:'What is the central idea of environmental justice?', options:['Everyone deserves a healthy environment and a voice in decisions.','Every neighborhood must look exactly the same.','Only scientists should make environmental decisions.'], answer:0, explanation:'Environmental justice connects fair protection from environmental harms with meaningful involvement in decisions. Income, race, and where someone lives should not determine whose health matters.', domain:'air', source:ej },
-  { id:'k2', type:'knowledge', topic:'Urban heat', title:'The shade makes a difference', question:'Why can a neighborhood with fewer trees get hotter?', options:['Trees prevent all weather changes.','Pavement absorbs heat, and fewer trees means less cooling shade.','Tall buildings always make air cooler.'], answer:1, explanation:'Roads and buildings absorb heat. Trees cool neighborhoods through shade and by releasing water vapor. Unequal tree cover can mean unequal exposure to heat.', domain:'green', source:heat },
-  { id:'k3', type:'knowledge', topic:'Clean water', title:'Follow the rain', question:'How can a rain garden help a neighborhood?', options:['It makes rain stop falling.','It replaces the need for drinking-water testing.','It absorbs runoff and helps filter stormwater.'], answer:2, explanation:'Rain gardens use plants and soil to capture rainfall where it lands. They can reduce runoff and filter some pollutants before that water reaches rivers and streams.', domain:'water', source:gi },
-  { id:'k4', type:'knowledge', topic:'Community voice', title:'A seat at the table', question:'Which is an example of meaningful community involvement?', options:['Residents help shape a plan before it is approved.','Residents hear about a project after construction.','Only people who own property can speak.'], answer:0, explanation:'Meaningful involvement gives affected residents a real opportunity to influence decisions. Listening early and removing barriers to participation helps communities shape their own future.', domain:'air', source:ej },
-  { id:'k5', type:'knowledge', topic:'Green spaces', title:'More than a pretty park', question:'What is one environmental benefit of neighborhood trees?', options:['They make all air pollution disappear.','They provide shade and can help improve local air quality.','They stop every flood.'], answer:1, explanation:'Trees offer shade, capture some air pollutants, and absorb rainwater. Their benefits depend on local conditions, careful planning, and ongoing maintenance.', domain:'green', source:heat },
-  { id:'k6', type:'knowledge', topic:'Equity', title:'Different needs. Shared care.', question:'A city has funding for cooling projects. What approach best supports equity?', options:['Spend the same amount on every street, regardless of need.','Fund only the neighborhoods that ask first.','Prioritize places facing the greatest heat and the fewest resources.'], answer:2, explanation:'Equity considers different needs and existing burdens. Directing resources to the people facing the greatest barriers can help close gaps in environmental protection.', domain:'green', source:ej },
-  { id:'k7', type:'knowledge', topic:'Stormwater', title:'A street that soaks it in', question:'Why might a community replace some pavement with planted areas?', options:['So more rain can soak into the ground.','To make runoff flow faster into homes.','To eliminate the need for any drainage planning.'], answer:0, explanation:'Planted areas can absorb and slow stormwater. Well-designed green infrastructure works alongside other systems to reduce runoff and improve neighborhood resilience.', domain:'water', source:gi },
-  { id:'k8', type:'knowledge', topic:'Environmental burdens', title:'Looking at the whole picture', question:'Why should planners consider multiple pollution sources together?', options:['Only the newest source matters.','People can be exposed to several environmental burdens at once.','All neighborhoods have identical exposures.'], answer:1, explanation:'A community may face traffic pollution, industrial activity, and limited green space at the same time. Considering the whole picture helps decision-makers understand unequal burdens.', domain:'air', source:ej },
-  { id:'c1', type:'challenge', topic:'Community planning', title:'Whose park is it, anyway?', question:'The city is planning a new park. Nearby renters have not been included. What would you do first?', options:['Organize an accessible meeting so renters can shape the plan.','Approve the design now and ask for feedback later.','Let only the largest donors decide.'], answer:0, explanation:'Residents who will use a space should help design it. Accessible meetings, language support, and early input can help more neighbors have a say.', domain:'green', source:ej },
-  { id:'c2', type:'challenge', topic:'Flood resilience', title:'When the rain comes', question:'One block floods repeatedly. Neighbors want long-term change. Where should the community begin?', options:['Assume every street has the same needs.','Document residents’ experiences and work together on drainage priorities.','Ask each household to solve flooding alone.'], answer:1, explanation:'Community knowledge helps identify where flooding happens and who is affected. Combining that knowledge with technical support can guide fairer infrastructure investments.', domain:'water', source:gi },
-  { id:'c3', type:'challenge', topic:'Public participation', title:'The meeting nobody can attend', question:'A hearing about a nearby project is scheduled during working hours. How could participation improve?', options:['Cancel all public discussion.','Count silence as agreement.','Offer multiple meeting times, accessible locations, and ways to comment.'], answer:2, explanation:'Being invited is not the same as being able to participate. Flexible times, accessible spaces, and several ways to provide input reduce barriers to having a voice.', domain:'air', source:ej },
-  { id:'c4', type:'challenge', topic:'Heat resilience', title:'A cooler walk to school', question:'Students cross a hot, unshaded street each day. Which proposal addresses the shared problem?', options:['Work with residents and the city to add and maintain shade along the route.','Tell everyone to avoid going outside forever.','Plant trees only in an already shaded park.'], answer:0, explanation:'Shade along everyday walking routes can help reduce heat exposure. Planning with residents helps put cooling projects where people need them.', domain:'green', source:heat },
-  { id:'c5', type:'challenge', topic:'Shared resources', title:'A grant, a choice', question:'Your neighborhood receives funding for green infrastructure. What should guide the decision?', options:['Choose the most expensive option automatically.','Combine community priorities, local conditions, and a maintenance plan.','Pick a project without asking residents.'], answer:1, explanation:'Green infrastructure needs to fit a place and its people. Community priorities and long-term care help projects deliver benefits that last.', domain:'water', source:gi },
-  { id:'c6', type:'challenge', topic:'Environmental fairness', title:'A new project next door', question:'A new facility is proposed near a neighborhood that already faces heavy traffic. What should the review include?', options:['Only the appearance of the building.','Only benefits to people living far away.','Existing environmental burdens and the voices of affected residents.'], answer:2, explanation:'Fair decisions consider the burdens a community already carries. People who may be affected should have a meaningful role in the review.', domain:'air', source:ej },
-  { id:'c7', type:'challenge', topic:'Neighborhood care', title:'Plant today. Care tomorrow.', question:'A tree-planting project is ready to launch. What helps it succeed over time?', options:['Choose suitable trees with residents and plan for watering and maintenance.','Plant any tree and never return.','Measure success only by the launch-day photo.'], answer:0, explanation:'Trees need care and appropriate placement. A maintenance plan and resident participation help trees thrive and provide lasting neighborhood benefits.', domain:'green', source:heat },
-  { id:'c8', type:'challenge', topic:'Accessible information', title:'Information everyone can use', question:'A city shares a technical report in only one language. How could your group help?', options:['Keep the report within a small committee.','Advocate for plain-language summaries and translations.','Assume everyone understands the technical terms.'], answer:1, explanation:'Useful information must be accessible. Clear language, translations, and accessible formats help more people participate in decisions affecting their neighborhood.', domain:'air', source:ej },
-  { id:'a1', type:'action', topic:'Collective action', title:'Small garden. Shared impact.', question:'Your block is creating a rain garden. How would you make the project a community effort?', options:['Invite neighbors to help choose the location and plan its care.','Choose the location without asking anyone.','Rely on one volunteer for every task.'], answer:0, explanation:'A shared plan can spread the work and reflect local priorities. Rain gardens can reduce runoff, while collaboration helps the project last.', domain:'water', source:gi },
-  { id:'a2', type:'action', topic:'Community voice', title:'Our neighborhood, our say', question:'Your group wants a more inclusive planning process. What is a useful action?', options:['Speak for residents without listening.','Gather residents’ priorities and present them together at a public meeting.','Wait until the final decision to start talking.'], answer:1, explanation:'Listening, organizing, and sharing collective priorities can help residents influence decisions. Community members bring expertise about their own everyday experiences.', domain:'air', source:ej },
-  { id:'a3', type:'action', topic:'Cooling together', title:'Grow the canopy', question:'Which tree project best serves neighbors facing the most heat?', options:['Add trees only to streets with many mature trees.','Plant without planning for care.','Work with residents to plant and maintain trees on unshaded streets.'], answer:2, explanation:'Putting trees where shade is scarce can help address unequal heat exposure. Resident input and ongoing care are essential parts of the work.', domain:'green', source:heat },
-  { id:'a4', type:'action', topic:'Learning together', title:'Turn knowledge into a toolkit', question:'Your class learned about environmental justice. How could you share what you learned?', options:['Create an accessible guide with local voices and opportunities to participate.','Use technical jargon without explaining it.','Share information only with people already involved.'], answer:0, explanation:'Clear, accessible education helps more people understand local issues. Including community perspectives connects learning with meaningful participation.', domain:'air', source:ej },
-  { id:'a5', type:'action', topic:'Water stewardship', title:'A map made by neighbors', question:'Your group is mapping places where rainwater collects. What makes the map more useful?', options:['Record only streets you personally visit.','Invite residents from different parts of the neighborhood to contribute.','Leave out areas with the most flooding.'], answer:1, explanation:'Residents see things that broad maps may miss. Including many experiences can help identify needs and guide conversations about green infrastructure.', domain:'water', source:gi },
-  { id:'a6', type:'action', topic:'Lasting change', title:'Keep the good growing', question:'The community has a new green space. What is a helpful next step?', options:['Stop checking whether people can use it.','Close it to everyone who did not volunteer.','Agree on shared care and regularly ask residents what is working.'], answer:2, explanation:'Environmental projects benefit from ongoing care and feedback. A space should remain welcoming, useful, and responsive to the people it serves.', domain:'green', source:gi },
-  { id:'a7', type:'action', topic:'Collaboration', title:'Better, together', question:'Neighbors, students, and local planners are tackling runoff. What can each group bring?', options:['Different kinds of knowledge that strengthen a shared plan.','Exactly the same experience and priorities.','A reason to exclude everyone else.'], answer:0, explanation:'Community experience and technical knowledge can complement each other. Collaboration helps create solutions that fit both the place and the people.', domain:'water', source:gi },
-  { id:'a8', type:'action', topic:'Shared learning', title:'Listen, then lead', question:'You want to help a neighborhood affected by pollution. What is a thoughtful first step?', options:['Arrive with a complete plan and refuse changes.','Listen to residents and support the priorities they identify.','Assume the community has no expertise.'], answer:1, explanation:'People living with environmental challenges have valuable expertise. Supporting community-led priorities respects that knowledge and strengthens collective action.', domain:'air', source:ej },
-  { id:'k9', type:'knowledge', topic:'Drinking-water contamination', title:'What’s in the water?', question:'What can a community drinking-water quality report help residents understand?', options:['Which contaminants were tested for and whether standards were exceeded.','The safety of every private well in the country.','Whether a river is safe to swim in.'], answer:0, explanation:'Community water reports describe tested contaminants, detected levels, and violations. Accessible results help residents ask informed questions about their water supply.', domain:'water', source:waterReport },
-  { id:'c9', type:'challenge', topic:'Clean water & accountability', title:'A report raises questions', question:'A drinking-water report lists a violation. Neighbors are concerned. What supports an informed community response?', options:['Assume the report applies to every water supply.','Ask the water utility and local health officials to explain the results and response.','Share a rumor before checking the report.'], answer:1, explanation:'Reports include information about violations and follow-up. Questions about a particular supply belong with the water utility or local health department, alongside current official notices.', domain:'water', source:waterReport },
-  { id:'a9', type:'action', topic:'Water information for everyone', title:'Clear information. Shared confidence.', question:'Your class wants to help neighbors understand their drinking-water report. What could you do?', options:['Remove information about violations to avoid questions.','Offer treatment advice without qualified guidance.','Help residents find the report and gather questions for the water provider.'], answer:2, explanation:'Helping people locate reports and prepare questions supports informed participation. Water providers and public health officials can explain local results and guidance.', domain:'water', source:waterReport }
+
+// Each Disaster Space has exactly one matching Solution Card.
+export const DISASTERS = [
+  { id: 'heatwave', name: 'Heatwave', icon: 'thermometer', solution: 'ac',
+    text: 'Extreme heat settles over the neighborhood. Homes without air conditioning and streets without shade become dangerous, especially for older adults and people with health conditions.' },
+  { id: 'air', name: 'Air pollution', icon: 'smog', solution: 'nebulizer',
+    detail: 'From infrastructure facilities, poor waste management, and highways through the city',
+    text: 'Highways cut through the neighborhood, and nearby facilities and poorly managed waste fill the air with pollution. Breathing gets harder, especially for people with asthma.' },
+  { id: 'water', name: 'Water pollution', icon: 'drop', solution: 'water-bottles',
+    text: 'The neighborhood’s water is contaminated and unsafe to drink. Families need clean water right away while the source is fixed.' },
+  { id: 'food', name: 'Food desert', icon: 'basket', solution: 'urban-farm',
+    text: 'The nearest supermarket is miles away. Without a car or a store nearby, getting fresh, healthy food is hard.' },
+  { id: 'soil', name: 'Poor top layer soil', icon: 'soil', solution: 'cover-crops',
+    text: 'The top layer of soil is worn out and washing away. Gardens and farms struggle to grow healthy crops.' },
+  { id: 'cold', name: 'Cold', icon: 'snowflake', solution: 'insulation',
+    text: 'A cold snap hits. Homes without good insulation lose heat quickly, leaving families with freezing rooms or high energy bills.' },
+  { id: 'deforestation', name: 'Local deforestation', icon: 'stump', solution: 'trees',
+    text: 'Nearby trees are cut down. The neighborhood loses shade, cleaner air, and homes for wildlife.' },
+  { id: 'tech', name: 'Lack of technological resources', icon: 'wifi-off', solution: 'library',
+    text: 'Many households don’t have reliable internet or a computer, which makes homework, job applications, and staying informed much harder.' },
+  { id: 'chemical', name: 'Industrial chemical pollution', icon: 'factory', solution: 'protest',
+    text: 'A nearby industrial site releases harmful chemicals into the air, water, and soil around homes and schools.' }
 ];
-export function categoryAt(position) { return ['knowledge', 'action', 'knowledge', 'challenge', 'action', 'challenge'][position % 6]; }
+
+export const SOLUTIONS = [
+  { id: 'ac', name: 'AC', short: 'AC', disaster: 'heatwave', icon: 'fan',
+    text: 'Air conditioning keeps your home cool and safe during extreme heat.' },
+  { id: 'nebulizer', name: 'Nebulizer', short: 'Nebulizer', disaster: 'air', icon: 'lungs',
+    text: 'A nebulizer turns asthma medicine into a mist that is easy to breathe in, helping people breathe more easily on bad air days.' },
+  { id: 'water-bottles', name: 'Community water bottle distribution', short: 'Water bottle distribution', disaster: 'water', icon: 'bottle',
+    text: 'Neighbors and local groups hand out clean bottled water so every family has safe water to drink.' },
+  { id: 'urban-farm', name: 'Stathis Paul comes to the community to build an urban farm', short: 'Urban farm', disaster: 'food', icon: 'sprout',
+    text: 'The new urban farm grows fresh fruits and vegetables right in the neighborhood, so healthy food is close to home.' },
+  { id: 'cover-crops', name: 'Cover crops', short: 'Cover crops', disaster: 'soil', icon: 'wheat',
+    text: 'Planting cover crops protects the soil from washing away and adds nutrients back, so the ground can grow healthy food again.' },
+  { id: 'insulation', name: 'Your house is insulated', short: 'Insulated house', disaster: 'cold', icon: 'house',
+    text: 'Insulation keeps warmth inside, so your home stays warm and energy bills stay lower.' },
+  { id: 'trees', name: 'Community plants 500 trees', short: '500 trees', disaster: 'deforestation', icon: 'tree',
+    text: 'Neighbors work together to bring back shade, cleaner air, and wildlife habitat.' },
+  { id: 'library', name: 'Local library opens with accessible technology and internet', short: 'Library tech access', disaster: 'tech', icon: 'library',
+    text: 'Free computers, internet access, and staff ready to help are now available to everyone in the neighborhood.' },
+  { id: 'protest', name: 'Community protests to change regulations', short: 'Protest for regulations', disaster: 'chemical', icon: 'megaphone',
+    text: 'Residents organize, speak up, and protest until leaders pass stronger rules that limit industrial pollution.' }
+];
+
+export const ORGANIZING = [
+  { id: 'o1', title: 'Neighborhood cleanup', text: 'Neighbors organize a cleanup day to clear trash and illegal dumping from a vacant lot, then ask the city for regular pickup.', why: 'Working together shows leaders that residents care and that the neighborhood needs better services.' },
+  { id: 'o2', title: 'Speak up at a public hearing', text: 'Residents attend a public hearing about a proposed facility and explain how it would affect their health and families.', why: 'Decision-makers need to hear from the people who will live with the results.' },
+  { id: 'o3', title: 'Grow a community garden', text: 'Neighbors turn an empty lot into a community garden where everyone can grow and share fresh vegetables.', why: 'Shared gardens bring fresh food closer and bring neighbors together.' },
+  { id: 'o4', title: 'Check on your neighbors', text: 'During a heat wave, volunteers call and visit older neighbors and let them know where the nearest cooling center is.', why: 'Simple check-ins can save lives when the weather turns dangerous.' },
+  { id: 'o5', title: 'Collect the data', text: 'Students and residents use air quality sensors to measure pollution near a highway and share the results with local officials.', why: 'Community-collected data can show that a problem exists and push leaders to act.' },
+  { id: 'o6', title: 'Share the technology', text: 'A community group starts a device-lending program and free digital skills classes for families without computers.', why: 'Access to technology opens doors to school, jobs, and important information.' },
+  { id: 'o7', title: 'Information for everyone', text: 'Volunteers translate public notices and meeting materials into the languages spoken in the neighborhood.', why: 'Everyone deserves to understand the decisions that affect their home.' },
+  { id: 'o8', title: 'Build a coalition', text: 'Schools, faith groups, tenant associations, and local businesses join forces to campaign for cleaner air.', why: 'Many groups speaking together are much harder to ignore.' },
+  { id: 'o9', title: 'Stock a community fridge', text: 'Neighbors keep a community fridge and pantry stocked so anyone can take free food or leave some for others.', why: 'Mutual aid helps families meet their needs today while longer-term solutions are built.' },
+  { id: 'o10', title: 'Plant and care for trees', text: 'A youth group plants trees on the hottest blocks and sets up a watering schedule to keep them healthy.', why: 'Trees cool streets and clean the air, but only if someone keeps caring for them.' },
+  { id: 'o11', title: 'Start a green club', text: 'Students start an environmental club that runs a recycling and composting program at their school.', why: 'Young people can lead change in their schools and communities.' },
+  { id: 'o12', title: 'Contact your representatives', text: 'Residents write letters and call their local representatives to ask for safe drinking water and lead pipe replacement.', why: 'Elected officials respond when many people ask for the same change.' }
+];
+
+export const FACTS = [
+  { id: 'f1', topic: 'The digital divide', text: 'About 2.2 billion people around the world were offline in 2025. This digital divide shows why affordable internet and digital education matter.' },
+  { id: 'f2', topic: 'Love Canal', text: 'During the 1940s and 1950s, over 21,000 tons of hazardous chemical waste were dumped at Love Canal in Niagara Falls, New York. Homes and a school were later built near the contaminated site.' },
+  { id: 'f3', topic: 'Safe drinking water', text: 'About 2.1 billion people lack access to safely managed drinking water, and 106 million people drink directly from untreated surface water, such as rivers and lakes.' },
+  { id: 'f4', topic: 'Our call to action', text: '“Build for Everyone, Leave No One Behind!” This game’s call to action shows why equal opportunities matter for marginalized communities, through innovation, accessible technology, and sustainable infrastructure.' },
+  { id: 'f5', topic: 'Growing food locally', text: 'The MSU-Detroit Partnership for Food, Learning and Innovation (DPFLI) has grown and donated over 2,000 pounds of fresh food directly to local families and food pantries.' },
+  { id: 'f6', topic: 'Grocery access', text: 'New Mexico is one of the states with the highest rates of limited grocery access. About 31.7% of residents live in areas with low access to supermarkets.' },
+  { id: 'f7', topic: 'The 1995 Chicago heat wave', text: 'In July 1995, a heat wave in Chicago brought temperatures as high as 106°F and caused about 739 deaths. Low-income communities, especially elderly and Black residents, were hit hardest because many lacked air conditioning and adequate assistance.' },
+  { id: 'f8', topic: 'The Dust Bowl', text: 'In the 1930s, severe drought and poor farming practices caused massive dust storms across the Great Plains, known as the Dust Bowl. Thousands of families, especially low-income farmers, lost their livelihoods and migrated.' },
+  { id: 'f9', topic: 'Urban heat islands', text: 'Cities can be up to 7°F hotter during the day than surrounding areas because roads, buildings, and pavement absorb heat.' },
+  { id: 'f10', topic: 'Sanitation', text: 'About 3.6 billion people, nearly half of the world’s population, lack access to safely managed sanitation in their homes.' },
+  { id: 'f11', topic: 'Healthy soil', text: 'Earthworms create underground tunnels that allow water and air to move through soil. Their activity helps improve soil structure and nutrient cycling.' },
+  { id: 'f12', topic: 'Defining environmental justice', text: 'The U.S. Environmental Protection Agency defines environmental justice as the “fair treatment and meaningful involvement of all people regardless of race, color, national origin, or income with respect to the development, implementation, and enforcement of environmental laws, regulations, and policies.”' }
+];
+
+// Board layout for spaces 1–36: N = Normal, M = Mystery, D = Disaster.
+// Every Disaster Space has a Normal Space behind it to move back to.
+const LAYOUT = 'NNMD' + 'NMND' + 'NNDM' + 'NMND' + 'MNDN' + 'NMND' + 'NDMN' + 'MNND' + 'NMDN';
+const BLANK_SPACES = [2, 10, 15, 20, 28, 31];
+const DISASTER_ORDER = ['heatwave', 'water', 'food', 'air', 'soil', 'cold', 'deforestation', 'tech', 'chemical'];
+export const BOARD = (() => {
+  const board = [{ index: 0, type: 'start' }];
+  let disaster = 0;
+  [...LAYOUT].forEach((code, i) => {
+    const index = i + 1;
+    if (code === 'N') board.push({ index, type: 'normal', fact: !BLANK_SPACES.includes(index) });
+    else if (code === 'M') board.push({ index, type: 'mystery' });
+    else board.push({ index, type: 'disaster', disaster: DISASTER_ORDER[disaster++] });
+  });
+  board.push({ index: FINISH, type: 'finish' });
+  return board;
+})();
+export const FACT_SPACES = BOARD.filter(s => s.type === 'normal' && s.fact).map(s => s.index);
+
+export const disasterById = id => DISASTERS.find(d => d.id === id);
+export const solutionById = id => SOLUTIONS.find(s => s.id === id);
+export const organizingById = id => ORGANIZING.find(o => o.id === id);
+export const factById = id => FACTS.find(f => f.id === id);
+export function factAt(game, index) {
+  const slot = FACT_SPACES.indexOf(index);
+  return slot < 0 ? null : factById(game.factOrder[slot]);
+}
+// The closest Normal Space behind a position, or the start if there is none.
+export function previousNormal(index) {
+  for (let i = index - 1; i >= 1; i--) if (BOARD[i].type === 'normal') return i;
+  return 0;
+}
+
+export function randomInt(max) {
+  const data = new Uint32Array(1); const limit = 4294967296 - 4294967296 % max;
+  do { crypto.getRandomValues(data); } while (data[0] >= limit);
+  return data[0] % max;
+}
+export function shuffle(items, rng = randomInt) {
+  const copy = [...items];
+  for (let i = copy.length - 1; i > 0; i--) { const j = rng(i + 1); [copy[i], copy[j]] = [copy[j], copy[i]]; }
+  return copy;
+}
+
 export function makePlayer(name, character, id = crypto.randomUUID()) {
   if (!CHARACTERS.some(c => c.id === character)) throw new Error('Choose a character.');
   name = String(name || '').trim().replace(/[<>\x00-\x1f]/g, '').slice(0, 24);
   if (!name) throw new Error('Enter your name.');
-  return { id, name, character, position:0, points:0, answered:0, correct:0 };
+  return { id, name, character, position: 0, cards: [], facts: [], used: 0, collected: 0, organizing: 0, setbacks: 0 };
 }
-export function newGame(players, mode = 'local') {
-  return { version:1, mode, status:mode === 'online' ? 'lobby' : 'playing', players, host:players[0]?.id, turn:0, round:1, phase:'spin', lastSpin:null, card:null, feedback:null, drawn:[], community:0, health:{air:20,water:20,green:20}, history:[{text:'A new chapter starts here. Your community is ready.',type:'start'}], revision:0 };
-}
-export function randomInt(max) {
-  const data = new Uint32Array(1); const limit = 4294967296 - 4294967296 % max;
-  do { crypto.getRandomValues(data); } while(data[0] >= limit);
-  return data[0] % max;
+export function newGame(players, mode = 'local', rng = randomInt) {
+  return {
+    version: VERSION, mode, status: mode === 'online' ? 'lobby' : players.length ? 'playing' : 'setup',
+    players, host: players[0]?.id, turn: 0, round: 1, phase: 'roll', lastRoll: null,
+    event: null, move: null, moveSeq: 0, winner: null,
+    factOrder: shuffle(FACTS.map(f => f.id), rng), organizingDrawn: [],
+    history: [{ text: 'A new game begins. ' + CALL_TO_ACTION, type: 'start' }], revision: 0
+  };
 }
 export function activePlayer(game) { return game.players[game.turn]; }
+export function log(game, text, type) { game.history.unshift({ text, type }); game.history = game.history.slice(0, 80); }
+
+function nextTurn(game) {
+  game.turn = (game.turn + 1) % game.players.length;
+  if (game.turn === 0) game.round++;
+  game.phase = 'roll'; game.event = null;
+}
+function recordMove(game, player, from, stops) {
+  game.moveSeq = (game.moveSeq || 0) + 1;
+  game.move = { seq: game.moveSeq, player: player.id, from, stops };
+}
+function moveBack(game, player, from) {
+  const back = previousNormal(from);
+  player.position = back; player.setbacks++;
+  return back;
+}
+function drawOrganizing(game, rng) {
+  let available = ORGANIZING.filter(o => !game.organizingDrawn.includes(o.id));
+  if (!available.length) { game.organizingDrawn = []; available = ORGANIZING; }
+  const card = available[rng(available.length)];
+  game.organizingDrawn.push(card.id);
+  return card;
+}
+
 export function takeAction(original, playerId, action, data = {}, rng = randomInt) {
   const game = structuredClone(original);
   const player = game.players.find(p => p.id === playerId);
@@ -69,56 +189,74 @@ export function takeAction(original, playerId, action, data = {}, rng = randomIn
     if (game.host !== playerId) throw new Error('Only the host can start the game.');
     if (game.status !== 'lobby' || game.players.length < 2) throw new Error('At least two players are needed.');
     game.status = 'playing';
+    log(game, player.name + ' started the game. ' + game.players[0].name + ' rolls first.', 'start');
   } else {
     if (game.status !== 'playing') throw new Error('This game is not in progress.');
     if (activePlayer(game)?.id !== playerId) throw new Error('It is another player’s turn.');
-    if (action === 'spin') {
-      if (game.phase !== 'spin') throw new Error('Finish your current turn first.');
-      const roll = rng(10) + 1;
-      player.position = Math.min(FINISH, player.position + roll);
-      game.lastSpin = roll;
-      if (player.position === FINISH) {
-        game.phase = 'feedback';
-        game.card = null;
-        game.feedback = { finished:true, points:0, explanation:'You made it to Common Ground! Cheer on your neighbors as they make their way here.' };
-        log(game, player.name + ' reached Common Ground.', 'finish');
-      } else {
-        const type = categoryAt(player.position);
-        let available = CARDS.filter(c => c.type === type && !game.drawn.includes(c.id));
-        if (!available.length) {
-          game.drawn = game.drawn.filter(id => !CARDS.some(c => c.type === type && c.id === id));
-          available = CARDS.filter(c => c.type === type);
+    const event = game.event;
+    if (action === 'roll') {
+      if (game.phase !== 'roll') throw new Error('Finish your current turn first.');
+      const roll = rng(DIE_SIDES) + 1, from = player.position, landed = Math.min(FINISH, from + roll);
+      player.position = landed; game.lastRoll = roll;
+      recordMove(game, player, from, [landed]);
+      game.move.roll = roll;
+      const space = BOARD[landed];
+      if (space.type === 'finish') {
+        game.status = 'complete'; game.winner = player.id; game.phase = 'event'; game.event = { type: 'finish' };
+        log(game, player.name + ' rolled ' + roll + ' and reached the finish line first!', 'finish');
+      } else if (space.type === 'normal' && !space.fact) {
+        log(game, player.name + ' rolled ' + roll + ' and landed on blank space ' + landed + '.', 'blank');
+        nextTurn(game);
+      } else if (space.type === 'normal') {
+        const fact = factAt(game, landed);
+        if (!player.facts.includes(fact.id)) player.facts.push(fact.id);
+        game.phase = 'event'; game.event = { type: 'fact', space: landed, fact: fact.id };
+        log(game, player.name + ' rolled ' + roll + ' and found a learning fact: ' + fact.topic + '.', 'fact');
+      } else if (space.type === 'mystery') {
+        game.phase = 'event';
+        if (rng(2) === 0) {
+          const card = SOLUTIONS[rng(SOLUTIONS.length)];
+          player.cards.push(card.id); player.collected++;
+          game.event = { type: 'solution', space: landed, card: card.id };
+          log(game, player.name + ' rolled ' + roll + ' and drew the ' + card.short + ' Solution Card.', 'solution');
+        } else {
+          const card = drawOrganizing(game, rng);
+          player.organizing++;
+          game.event = { type: 'organizing', space: landed, card: card.id };
+          log(game, player.name + ' rolled ' + roll + ' and drew a Community Organizing Card: ' + card.title + '.', 'organizing');
         }
-        const card = available[rng(available.length)];
-        game.drawn.push(card.id); game.card = card.id; game.phase = 'card'; game.feedback = null;
-        log(game, player.name + ' moved ' + roll + ' spaces to ' + CATEGORIES[type].name.toLowerCase() + '.', type);
-      }
-    } else if (action === 'answer') {
-      if (game.phase !== 'card') throw new Error('There is no question to answer.');
-      const card = CARDS.find(c => c.id === game.card);
-      if (!Number.isInteger(data.answer) || data.answer < 0 || data.answer >= card.options.length) throw new Error('Choose an answer.');
-      const correct = data.answer === card.answer;
-      const points = correct ? ({knowledge:5,challenge:8,action:10}[card.type]) : 2;
-      player.points += points; player.answered++; player.correct += Number(correct);
-      game.community += points;
-      game.health[card.domain] = Math.min(100, game.health[card.domain] + (correct ? 9 : 3));
-      game.feedback = { correct, selected:data.answer, points, explanation:card.explanation };
-      game.phase = 'feedback';
-      log(game, player.name + ' contributed ' + points + ' community points.', card.type);
-    } else if (action === 'next') {
-      if (game.phase !== 'feedback') throw new Error('Complete your card before continuing.');
-      if (game.players.every(p => p.position === FINISH)) {
-        game.status = 'complete';
-        log(game, 'Everyone reached Common Ground. Look what you built together.', 'finish');
       } else {
-        const before = game.turn;
-        do { game.turn = (game.turn + 1) % game.players.length; } while(game.players[game.turn].position === FINISH);
-        if (game.turn <= before) game.round++;
-        game.phase = 'spin'; game.card = null; game.feedback = null;
+        const disaster = disasterById(space.disaster), solution = solutionById(disaster.solution);
+        game.phase = 'event';
+        if (player.cards.includes(solution.id)) {
+          game.event = { type: 'disaster', space: landed, disaster: disaster.id, outcome: 'choose' };
+          log(game, player.name + ' rolled ' + roll + ' and landed on ' + disaster.name + ', holding the ' + solution.short + ' card.', 'disaster');
+        } else {
+          const back = moveBack(game, player, landed);
+          game.move.stops.push(back);
+          game.event = { type: 'disaster', space: landed, disaster: disaster.id, outcome: 'moved', backTo: back };
+          log(game, player.name + ' rolled ' + roll + ', hit ' + disaster.name + ' without the ' + solution.short + ' card, and moved back to ' + (back ? 'space ' + back : 'the start') + '.', 'disaster');
+        }
       }
+    } else if (action === 'use-card' || action === 'move-back') {
+      if (game.phase !== 'event' || event?.type !== 'disaster' || event.outcome !== 'choose') throw new Error('There is no disaster to respond to.');
+      const disaster = disasterById(event.disaster), solution = solutionById(disaster.solution);
+      if (action === 'use-card') {
+        player.cards.splice(player.cards.indexOf(solution.id), 1); player.used++;
+        event.outcome = 'used';
+        log(game, player.name + ' used the ' + solution.short + ' card to stay safe from ' + disaster.name + '.', 'used');
+      } else {
+        const back = moveBack(game, player, event.space);
+        recordMove(game, player, event.space, [back]);
+        event.outcome = 'moved'; event.backTo = back;
+        log(game, player.name + ' kept the ' + solution.short + ' card and moved back to ' + (back ? 'space ' + back : 'the start') + '.', 'disaster');
+      }
+    } else if (action === 'continue') {
+      if (game.phase !== 'event') throw new Error('Roll the die to take your turn.');
+      if (event?.type === 'disaster' && event.outcome === 'choose') throw new Error('Choose whether to use your Solution Card.');
+      nextTurn(game);
     } else throw new Error('Unknown game action.');
   }
   game.revision++;
   return game;
 }
-export function log(game, text, type) { game.history.unshift({text,type}); game.history = game.history.slice(0,80); }
