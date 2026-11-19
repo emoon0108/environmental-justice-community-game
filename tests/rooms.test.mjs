@@ -27,10 +27,12 @@ test('online turns are enforced by the server and visible to every neighbor',asy
   const {call,db}=fixture();const {host,guest}=await roomWithTwo(call),path='rooms/'+host.code;
   assert.equal((await call(path+'/action',{action:'start'},guest.token)).status,409);
   assert.equal((await call(path+'/action',{action:'start'},host.token)).status,200);
-  assert.equal((await call(path+'/action',{action:'spin'},guest.token)).status,409);
-  const spin=await call(path+'/action',{action:'spin',position:35,points:9999},host.token);assert.equal(spin.status,200);
-  assert.ok(spin.data.game.players[0].position>=1&&spin.data.game.players[0].position<=10);assert.equal(spin.data.game.community,0);
-  const remote=await call(path,null,guest.token);assert.deepEqual(remote.data.game,spin.data.game);db.close();
+  assert.equal((await call(path+'/action',{action:'roll'},guest.token)).status,409);
+  const roll=await call(path+'/action',{action:'roll',position:35,cards:['ac']},host.token);assert.equal(roll.status,200);
+  const mover=roll.data.game.players[0];
+  assert.ok(roll.data.game.lastRoll>=1&&roll.data.game.lastRoll<=6);assert.ok(mover.position>=0&&mover.position<=6);assert.ok(mover.cards.length<=1&&!mover.cards.includes('ac')||roll.data.game.event?.type==='solution');
+  const remote=await call(path,null,guest.token);assert.deepEqual(remote.data.game,roll.data.game);
+  assert.equal((await call(path+'/action',{action:'spin'},host.token)).status,400);db.close();
 });
 test('room joins reject duplicate names, duplicate pieces, and started games',async()=>{
   const {call,db}=fixture();const {host}=await roomWithTwo(call),path='rooms/'+host.code;
@@ -59,9 +61,9 @@ test('the host role transfers when a host leaves',async()=>{
 });
 test('leaving an active turn releases the turn to the next neighbor',async()=>{
   const {call,db}=fixture();const {host,guest}=await roomWithTwo(call),path='rooms/'+host.code;
-  await call(path+'/action',{action:'start'},host.token);await call(path+'/action',{action:'spin'},host.token);await call(path+'/leave',{},host.token);
-  const read=await call(path,null,guest.token);assert.equal(read.data.game.phase,'spin');assert.equal(read.data.game.players[read.data.game.turn].id,guest.playerId);
-  assert.equal((await call(path+'/action',{action:'spin'},guest.token)).status,200);db.close();
+  await call(path+'/action',{action:'start'},host.token);await call(path+'/action',{action:'roll'},host.token);await call(path+'/leave',{},host.token);
+  const read=await call(path,null,guest.token);assert.equal(read.data.game.phase,'roll');assert.equal(read.data.game.event,null);assert.equal(read.data.game.players[read.data.game.turn].id,guest.playerId);
+  assert.equal((await call(path+'/action',{action:'roll'},guest.token)).status,200);db.close();
 });
 test('expired rooms cannot be joined or resumed',async()=>{
   const {call,db}=fixture();const host=(await call('rooms',{name:'Alex',character:'leaf'})).data;
@@ -72,6 +74,20 @@ test('cross-origin writes and unsupported payloads are rejected',async()=>{
   const {call,db}=fixture();assert.equal((await call('rooms',{name:'Alex',character:'leaf'},null,{Origin:'https://other.test'})).status,403);
   assert.equal((await call('rooms',{name:'Alex',character:'unknown'})).status,400);
   assert.equal((await call('rooms',{name:'Alex',character:'leaf',large:'x'.repeat(9000)})).status,413);db.close();
+});
+test('the version route lets the browser detect an outdated room service',async()=>{
+  const {call,db}=fixture();const res=await call('version');assert.equal(res.status,200);assert.equal(res.data.version,2);db.close();
+});
+test('online turns resolve events and pass to the next player',async()=>{
+  const {call,db}=fixture();const {host,guest}=await roomWithTwo(call),path='rooms/'+host.code;
+  await call(path+'/action',{action:'start'},host.token);
+  let game=(await call(path+'/action',{action:'roll'},host.token)).data.game;
+  if(game.phase==='event'){
+    if(game.event.outcome==='choose')game=(await call(path+'/action',{action:'use-card'},host.token)).data.game;
+    assert.equal((await call(path+'/action',{action:'continue'},guest.token)).status,409);
+    game=(await call(path+'/action',{action:'continue'},host.token)).data.game;
+  }
+  assert.equal(game.players[game.turn].id,guest.playerId);assert.equal(game.phase,'roll');db.close();
 });
 test('the app remains usable when online storage is unavailable',async()=>{
   const res=await worker.fetch(new Request('https://game.test/api/rooms',{method:'POST',body:'{}'}),{});assert.equal(res.status,503);
